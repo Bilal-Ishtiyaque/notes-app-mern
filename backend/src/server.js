@@ -1,27 +1,36 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import serverless from "serverless-http";
 
-import notesRoutes from "./routes/notesRoutes.js";
-import { connectDb } from "./config/db.js";
-import rateLimiter from "./middleware/rateLimiter.js";
+import notesRoutes from "./src/routes/notesRoutes.js";
+import { connectDb } from "./src/config/db.js";
+import rateLimiter from "./src/middleware/rateLimiter.js";
 
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 5000;
 
 app.use(cors({
-    origin: "http://localhost:5173",
+  origin: "*",
 }));
 
 app.use(express.json());
 app.use(rateLimiter);
-
 app.use("/api/notes", notesRoutes);
 
-connectDb().then(() => {
-    app.listen(port, () => {
-        console.log(`Hi Bilal! Server has started on port ${port}`);
-    });
-});
+let serverlessHandler;
+
+async function initialize() {
+  await connectDb();
+  serverlessHandler = serverless(app);
+}
+
+initialize();
+
+export const handler = async (event, context) => {
+  if (!serverlessHandler) {
+    await initialize();
+  }
+  return serverlessHandler(event, context);
+};
