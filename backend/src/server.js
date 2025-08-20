@@ -19,6 +19,11 @@ app.use(express.json());
 app.use(rateLimiter);
 app.use("/api/notes", notesRoutes);
 
+app.get("/", (req, res) => {
+  res.json({ message: "API is working" });
+});
+
+
 let serverlessHandler;
 
 async function initialize() {
