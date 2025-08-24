@@ -5,10 +5,10 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// lets say i want to have 100 requests per minute
+// i want to have 100 requests per minute
 const ratelimit = new Ratelimit({
     redis: Redis.fromEnv(),
-    limiter: Ratelimit.slidingWindow(5, "30 s")
+    limiter: Ratelimit.slidingWindow(10, "60 s")
 });
 
 

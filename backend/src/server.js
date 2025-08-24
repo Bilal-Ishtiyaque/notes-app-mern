@@ -11,6 +11,8 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
+app.set('trust proxy', true);
+
 app.use(cors({
     origin: "https://notes-app-frontend-teal.vercel.app",
 }));
